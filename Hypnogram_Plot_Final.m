@@ -11,6 +11,26 @@ D1=load('C:\Users\rdas\Downloads\Consensus_Final_Subj_2\Consensus_Final\ConSense
 D2=load('C:\Users\rdas\Downloads\Consensus_Final_Subj_2\Consensus_Final\ConSense2_UNMC2.mat'); % Provide the Full Path of Night-2 Consesus Score File.
 D3=load('C:\Users\rdas\Downloads\Consensus_Final_Subj_2\Consensus_Final\ConSense2_UNMC3.mat'); % Provide the Full Path of Night-3 Consesus Score File.
 
+%%----------------- Start Time of the Night Calculation -----------------------%%
+Start_N1=D1.TT.ActTime(1);
+Start_N2=D2.TT.ActTime(1);
+Start_N3=D3.TT.ActTime(1);
+Night_Start_Time=[Start_N1 Start_N2 Start_N3];
+Night_Start_Time=timeofday(Night_Start_Time);
+Min_Start_Time=min(Night_Start_Time);
+[h,m,s] = hms(Min_Start_Time);
+Starting_Hour=h;
+Starting_Hour=duration(Starting_Hour,0,0);
+N1_Sub_ToHour=Night_Start_Time(1)-Starting_Hour;
+[N1_h,N1_m,N1_s]=hms(N1_Sub_ToHour);
+N1_Strat_Subtraction_ToHour=(120/3600*((N1_h*3600)+(N1_m*60)+N1_s));
+N2_Sub_ToHour=Night_Start_Time(2)-Starting_Hour;
+[N2_h,N2_m,N2_s]=hms(N2_Sub_ToHour);
+N2_Strat_Subtraction_ToHour=(120/3600*((N2_h*3600)+(N2_m*60)+N2_s));
+N3_Sub_ToHour=Night_Start_Time(3)-Starting_Hour;
+[N3_h,N3_m,N3_s]=hms(N3_Sub_ToHour);
+N3_Strat_Subtraction_ToHour=(120/3600*((N3_h*3600)+(N3_m*60)+N3_s));
+
 %%----------------- Night-1 Sleep State Plotting -----------------------%%
 for i=1:height(D1.TT)-1
     test_D1{i,1}=D1.TT.ActTime(i);
@@ -54,35 +74,37 @@ for i=1:2:height(xb)-1
 end
 title('Night-1');
 
-[h,m,s] = hms(test_D1{1,1});
-time_D1(1)=strcat(string(h),':',string(m),':', string(s), ' PM');
-k=h;
+[k,~,~]=hms(Starting_Hour);
+time_D1(1)=strcat(string(k),':00', ' PM');
 AMPM=' PM';
-for j=2:1:15
-    k=k+1;
-    time_D1(j)=strcat(string(k),':',string(m),':', string(s), AMPM);
+for j=2:1:16
+    k=k+1;    
+    time_D1(j)=strcat(string(k),':00', AMPM);
     if k==24
         k=0;
         AMPM=' AM';
-        time_D1(j)=strcat(string(0),':',string(m),':', string(s), AMPM);
+        time_D1(j)=strcat(string(0),':00', AMPM); 
     end
 end
 
 %---------Setting Properties of Subplot Graph-1---------------------------%
-ax = gca; % current axes
-ax.FontName = 'Times New Roman';
-ax.FontSize = 12;
-ax.FontWeight = 'Bold';
-ax.TickDir = 'out';
-ax.TickLength = [0.02 0.02];
-ax.XLim = [0 1320]; % Adjust value of XLim here in order to view certain length of X Axis
-ax.YLim = [0.5 5.5];
-ax.XGrid= 'on';
-ax.XTick=[0 120 240 360 480 600 720 840 960 1080 1200 1320 1440 1560 1680];
-ax.XTickLabel= {time_D1(1),time_D1(2),time_D1(3),time_D1(4),time_D1(5),time_D1(6),time_D1(7),time_D1(8),time_D1(9),time_D1(10),time_D1(11),time_D1(12),time_D1(13),time_D1(14),time_D1(15)};
-ax.YGrid='on';
-ax.YTick=[0.5 1 2 3 4 5 5.5];
-ax.YTickLabel={'','N3','N2','N1','REM','Wake',''};
+ax1 = gca; % current axes
+ax1.FontName = 'Times New Roman';
+ax1.FontSize = 12;
+ax1.FontWeight = 'Bold';
+ax1.TickDir = 'out';
+ax1.TickLength = [0.02 0.02];
+XLim_Hours=12; % Adjust value of XLim here by changing the XLim_Hours in order to view certain length of X Axis
+ax1.XLim = [-N1_Strat_Subtraction_ToHour -N1_Strat_Subtraction_ToHour+(XLim_Hours*120)]; 
+ax1.YLim = [0.5 5.5];
+ax1.XGrid= 'on';
+ax1.XTick=[(-N1_Strat_Subtraction_ToHour) (-N1_Strat_Subtraction_ToHour+120) (-N1_Strat_Subtraction_ToHour+240) (-N1_Strat_Subtraction_ToHour+360) (-N1_Strat_Subtraction_ToHour+480) (-N1_Strat_Subtraction_ToHour+600) (-N1_Strat_Subtraction_ToHour+720)...
+      (-N1_Strat_Subtraction_ToHour+840) (-N1_Strat_Subtraction_ToHour+960) (-N1_Strat_Subtraction_ToHour+1080) (-N1_Strat_Subtraction_ToHour+1200) (-N1_Strat_Subtraction_ToHour+1320) (-N1_Strat_Subtraction_ToHour+1440) (-N1_Strat_Subtraction_ToHour+1560)...
+      (-N1_Strat_Subtraction_ToHour+1680) (-N1_Strat_Subtraction_ToHour+1800)];
+ax1.XTickLabel= {time_D1(1),time_D1(2),time_D1(3),time_D1(4),time_D1(5),time_D1(6),time_D1(7),time_D1(8),time_D1(9),time_D1(10),time_D1(11),time_D1(12),time_D1(13),time_D1(14),time_D1(15),time_D1(16)};
+ax1.YGrid='on';
+ax1.YTick=[0.5 1 2 3 4 5 5.5];
+ax1.YTickLabel={'','N3','N2','N1','REM','Wake',''};
 
 hold off;
 
@@ -127,35 +149,24 @@ for i=1:2:height(xb)-1
     end
 end
 title('Night-2');
-[h,m,s] = hms(test_D2{1,1});
-time_D2(1)=strcat(string(h),':',string(m),':', string(s), ' PM');
-k=h;
-AMPM=' PM';
-for j=2:1:15
-    k=k+1;
-    time_D2(j)=strcat(string(k),':',string(m),':', string(s), AMPM);
-    if k==24
-        k=0;
-        AMPM=' AM';
-        time_D2(j)=strcat(string(0),':',string(m),':', string(s), AMPM);
-    end
-end
 
 %---------Setting Properties of Subplot Graph-2---------------------------%
-ax = gca; % current axes
-ax.FontName = 'Times New Roman';
-ax.FontSize = 12;
-ax.FontWeight = 'Bold';
-ax.TickDir = 'out';
-ax.TickLength = [0.02 0.02];
-ax.XLim = [0 1320]; % Adjust value of XLim here in order to view certain length of X Axis
-ax.YLim = [0.5 5.5];
-ax.XGrid= 'on';
-ax.XTick=[0 120 240 360 480 600 720 840 960 1080 1200 1320 1440 1560 1680];
-ax.XTickLabel= {time_D2(1),time_D2(2),time_D2(3),time_D2(4),time_D2(5),time_D2(6),time_D2(7),time_D2(8),time_D2(9),time_D2(10),time_D2(11),time_D2(12),time_D2(13),time_D2(14),time_D2(15)};
-ax.YGrid='on';
-ax.YTick=[0.5 1 2 3 4 5 5.5];
-ax.YTickLabel={'','N3','N2','N1','REM','Wake',''};
+ax2 = gca; % current axes
+ax2.FontName = 'Times New Roman';
+ax2.FontSize = 12;
+ax2.FontWeight = 'Bold';
+ax2.TickDir = 'out';
+ax2.TickLength = [0.02 0.02];
+ax2.XLim = [-N2_Strat_Subtraction_ToHour -N2_Strat_Subtraction_ToHour+(XLim_Hours*120)]; 
+ax2.YLim = [0.5 5.5];
+ax2.XGrid= 'on';
+ax2.XTick=[(-N2_Strat_Subtraction_ToHour) (-N2_Strat_Subtraction_ToHour+120) (-N2_Strat_Subtraction_ToHour+240) (-N2_Strat_Subtraction_ToHour+360) (-N2_Strat_Subtraction_ToHour+480) (-N2_Strat_Subtraction_ToHour+600) (-N2_Strat_Subtraction_ToHour+720)...
+      (-N2_Strat_Subtraction_ToHour+840) (-N2_Strat_Subtraction_ToHour+960) (-N2_Strat_Subtraction_ToHour+1080) (-N2_Strat_Subtraction_ToHour+1200) (-N2_Strat_Subtraction_ToHour+1320) (-N2_Strat_Subtraction_ToHour+1440) (-N2_Strat_Subtraction_ToHour+1560)...
+      (-N2_Strat_Subtraction_ToHour+1680) (-N2_Strat_Subtraction_ToHour+1800)];
+ax2.XTickLabel= {time_D1(1),time_D1(2),time_D1(3),time_D1(4),time_D1(5),time_D1(6),time_D1(7),time_D1(8),time_D1(9),time_D1(10),time_D1(11),time_D1(12),time_D1(13),time_D1(14),time_D1(15),time_D1(16)};
+ax2.YGrid='on';
+ax2.YTick=[0.5 1 2 3 4 5 5.5];
+ax2.YTickLabel={'','N3','N2','N1','REM','Wake',''};
 
 hold off;
 
@@ -200,38 +211,26 @@ for i=1:2:height(xb)-1
     end
 end
 title('Night-3');
-[h,m,s] = hms(test_D3{1,1});
-time_D3(1)=strcat(string(h),':',string(m),':', string(s), ' PM');
-k=h;
-AMPM=' PM';
-for j=2:1:15
-    k=k+1;
-    time_D3(j)=strcat(string(k),':',string(m),':', string(s), AMPM);
-    if k==24
-        k=0;
-        AMPM=' AM';
-        time_D3(j)=strcat(string(0),':',string(m),':', string(s), AMPM);
-    end
-end
 
 %---------Setting Properties of Subplot Graph-3---------------------------%
-ax = gca; % current axes
-ax.FontName = 'Times New Roman';
-ax.FontSize = 12;
-ax.FontWeight = 'Bold';
-ax.TickDir = 'out';
-ax.TickLength = [0.02 0.02];
-ax.XLim = [0 1320]; % Adjust value of XLim here in order to view certain length of X Axis
-ax.YLim = [0.5 5.5];
-ax.XGrid= 'on';
-ax.XTick=[0 120 240 360 480 600 720 840 960 1080 1200 1320 1440 1560 1680];
-ax.XTickLabel= {time_D3(1),time_D3(2),time_D3(3),time_D3(4),time_D3(5),time_D3(6),time_D3(7),time_D3(8),time_D3(9),time_D3(10),time_D3(11),time_D3(12),time_D3(13),time_D3(14),time_D3(15)};
-ax.YGrid='on';
-ax.YTick=[0.5 1 2 3 4 5 5.5];
-ax.YTickLabel={'','N3','N2','N1','REM','Wake',''};
-sgtitle('UNMC Subject No. 3') % Add The subject No and the acronym of institution that acquired the data to add Title of the Figure
-
+ax3 = gca; % current axes
+ax3.FontName = 'Times New Roman';
+ax3.FontSize = 12;
+ax3.FontWeight = 'Bold';
+ax3.TickDir = 'out';
+ax3.TickLength = [0.02 0.02];
+ax3.XLim = [-N3_Strat_Subtraction_ToHour -N3_Strat_Subtraction_ToHour+(XLim_Hours*120)]; % Adjust value of XLim here in order to view certain length of X Axis
+ax3.YLim = [0.5 5.5];
+ax3.XGrid= 'on';
+ax3.XTick=[(-N3_Strat_Subtraction_ToHour) (-N3_Strat_Subtraction_ToHour+120) (-N3_Strat_Subtraction_ToHour+240) (-N3_Strat_Subtraction_ToHour+360) (-N3_Strat_Subtraction_ToHour+480) (-N3_Strat_Subtraction_ToHour+600) (-N3_Strat_Subtraction_ToHour+720)...
+      (-N3_Strat_Subtraction_ToHour+840) (-N3_Strat_Subtraction_ToHour+960) (-N3_Strat_Subtraction_ToHour+1080) (-N3_Strat_Subtraction_ToHour+1200) (-N3_Strat_Subtraction_ToHour+1320) (-N3_Strat_Subtraction_ToHour+1440) (-N3_Strat_Subtraction_ToHour+1560)...
+      (-N3_Strat_Subtraction_ToHour+1680) (-N3_Strat_Subtraction_ToHour+1800)];
+ax3.XTickLabel= {time_D1(1),time_D1(2),time_D1(3),time_D1(4),time_D1(5),time_D1(6),time_D1(7),time_D1(8),time_D1(9),time_D1(10),time_D1(11),time_D1(12),time_D1(13),time_D1(14),time_D1(15),time_D1(16)};
+ax3.YGrid='on';
+ax3.YTick=[0.5 1 2 3 4 5 5.5];
+ax3.YTickLabel={'','N3','N2','N1','REM','Wake',''};
+sgtitle('UNMC Subject No. 2') % Change the Subject Name Here
 hold off;
 
-
+%-----------End of Program------------------------------------------------%
 
